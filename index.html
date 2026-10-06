@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healing Hands Clinic · Navratri Mystery Box Game</title>
+    <style>
+        :root {
+            --bg-navy: #0B1021;
+            --bg-maroon: #2D0A1E;
+            --gold-primary: #D4AF37;
+            --gold-light: #F3E5AB;
+            --gold-dark: #AA7A1E;
+            --cream-bg: #FFFDF7;
+            --text-dark: #1A1A1A;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at center, var(--bg-maroon) 0%, var(--bg-navy) 100%);
+            color: #FFFFFF;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(2px 2px at 20px 30px, var(--gold-light), rgba(0, 0, 0, 0)),
+                radial-gradient(2px 2px at 40px 70px, #ffffff, rgba(0, 0, 0, 0)),
+                radial-gradient(1px 1px at 90px 40px, var(--gold-primary), rgba(0, 0, 0, 0)),
+                radial-gradient(2px 2px at 160px 120px, var(--gold-light), rgba(0, 0, 0, 0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        header {
+            text-align: center;
+            z-index: 2;
+            margin-bottom: 20px;
+        }
+
+        .clinic-title {
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            color: var(--gold-light);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .main-title {
+            font-size: 2.8rem;
+            color: var(--gold-primary);
+            background: linear-gradient(135deg, #FFFDF7 0%, var(--gold-primary) 50%, var(--gold-dark) 100%);
+            /* -webkit-background-clip: text; */
+            /* -webkit-text-fill-color: transparent; */
+            text-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #E0E0E0;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .stats-bar {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 15px;
+            display: inline-block;
+            font-weight: 600;
+            color: var(--gold-light);
+            backdrop-filter: blur(5px);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            z-index: 2;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4);
+            background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--gold-light);
+            border: 1px solid var(--gold-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 175, 55, 0.2);
+            color: #FFF;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 15px;
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto 30px auto;
+            z-index: 2;
+        }
+
+        @media (max-width: 900px) {
+            .grid-container {
+                grid-template-columns: repeat(5, 1fr);
+            }
+
+            .main-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .grid-container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .box {
+            aspect-ratio: 1;
+            background: #1A213D;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            perspective: 1000px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid rgba(212, 175, 55, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .box:hover:not(.opened) {
+            transform: translateY(-5px) scale(1.03);
+            border-color: var(--gold-primary);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+        }
+
+        .box-color-1 {
+            --box-accent: #FF4B4B;
+        }
+
+        .box-color-2 {
+            --box-accent: #FF851B;
+        }
+
+        .box-color-3 {
+            --box-accent: #FFDC00;
+        }
+
+        .box-color-4 {
+            --box-accent: #2ECC40;
+        }
+
+        .box-color-5 {
+            --box-accent: #0074D9;
+        }
+
+        .box-color-6 {
+            --box-accent: #B10DC9;
+        }
+
+        .box-color-7 {
+            --box-accent: #FF69B4;
+        }
+
+        .box-color-8 {
+            --box-accent: #39CCCC;
+        }
+
+        .box-color-9 {
+            --box-accent: #E0E0E0;
+        }
+
+        .box-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .box-number {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            z-index: 2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .ribbon-v {
+            position: absolute;
+            width: 16px;
+            height: 100%;
+            background: var(--box-accent, var(--gold-primary));
+            top: 0;
+            opacity: 0.8;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .ribbon-h {
+            position: absolute;
+            height: 16px;
+            width: 100%;
+            background: var(--box-accent, var(--gold-primary));
+            left: 0;
+            opacity: 0.8;
+            box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .bow {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: var(--gold-primary);
+            border-radius: 50%;
+            z-index: 2;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bow::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--gold-dark);
+            border-radius: 50%;
+        }
+
+        .box.opened {
+            background: #0D1326;
+            border-color: rgba(212, 175, 55, 0.15);
+            opacity: 0.8;
+            cursor: default;
+        }
+
+        .box.opened .box-inner {
+            display: none;
+        }
+
+        .box.opened .revealed-mini {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            text-align: center;
+            height: 100%;
+            width: 100%;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .revealed-mini .mini-number {
+            font-size: 0.75rem;
+            color: var(--gold-light);
+            opacity: 0.7;
+            position: absolute;
+            top: 4px;
+            left: 6px;
+        }
+
+        .revealed-mini .mini-award {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            line-height: 1.1;
+            word-break: break-word;
+        }
+
+        .revealed-mini.empty .mini-award {
+            color: #888;
+            font-weight: 500;
+            font-size: 0.7rem;
+        }
+
+        @keyframes shake {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            20% {
+                transform: rotate(-8deg);
+            }
+
+            40% {
+                transform: rotate(8deg);
+            }
+
+            60% {
+                transform: rotate(-5deg);
+            }
+
+            80% {
+                transform: rotate(5deg);
+            }
+
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+
+        .shaking {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .reveal-card {
+            background: radial-gradient(circle at top, var(--cream-bg) 0%, #EFEAD8 100%);
+            border: 4px solid var(--gold-primary);
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
+            color: var(--text-dark);
+            box-shadow: 0 0 50px rgba(212, 175, 55, 0.5);
+            transform: scale(0.7);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .modal-overlay.active .reveal-card {
+            transform: scale(1);
+        }
+
+        .card-header {
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: var(--gold-dark);
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 2.2rem;
+            color: #2D0A1E;
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .card-detail {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .card-box-num {
+            display: inline-block;
+            background: var(--bg-maroon);
+            color: var(--gold-light);
+            padding: 4px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 101;
+        }
+
+        .settings-panel {
+            width: 100%;
+            max-width: 1100px;
+            background: rgba(11, 16, 33, 0.9);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            z-index: 2;
+            display: none;
+        }
+
+        .settings-panel.open {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .settings-title {
+            color: var(--gold-primary);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--gold-light);
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            color: #FFF;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        footer {
+            margin-top: auto;
+            padding-top: 20px;
+            text-align: center;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .diya-container {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 10px;
+        }
+
+        .diya {
+            width: 20px;
+            height: 10px;
+            background: var(--gold-dark);
+            border-radius: 0 0 10px 10px;
+            position: relative;
+        }
+
+        .diya::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 12px;
+            background: #FF851B;
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 8px #FF4B4B, 0 0 12px #FFDC00;
+            animation: flicker 0.15s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% {
+                transform: translateX(-50%) scale(1);
+                opacity: 0.9;
+            }
+
+            100% {
+                transform: translateX(-50%) scale(1.15);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="clinic-title">Healing Hands Clinic · Virtual Awards Ceremony</div>
+        <h1 class="main-title">Navratri Mystery Box</h1>
+        <div class="subtitle">Pick a box to reveal your award!</div>
+        <div class="stats-bar">
+            Remaining Boxes: <span id="remaining-count">40</span> / <span id="total-count">40</span>
+        </div>
+    </header>
+
+    <div class="controls">
+        <button class="btn" onclick="shuffleAndClose()">Close All & Shuffle</button>
+        <button class="btn btn-secondary" onclick="revealAll()">Reveal All</button>
+        <button class="btn btn-secondary" onclick="toggleSettings()">⚙️ Edit Awards</button>
+    </div>
+
+    <div class="grid-container" id="grid"></div>
+
+    <div class="settings-panel" id="settings-panel">
+        <div class="settings-title">Game Configuration</div>
+        <div class="form-group">
+            <label for="box-count-input">Number of Boxes (1-100):</label>
+            <input type="number" id="box-count-input" value="40" min="1" max="100">
+        </div>
+        <div class="form-group">
+            <label for="awards-input">Awards List (One per line, optional detail after '|'):</label>
+            <textarea id="awards-input"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="empty-msg-input">Empty Box Message:</label>
+            <input type="text" id="empty-msg-input" value="Better Luck Next Time!">
+        </div>
+        <button class="btn" onclick="saveSettings()">Save & Restart Game</button>
+    </div>
+
+    <footer>
+        <div class="diya-container">
+            <div class="diya"></div>
+            <div class="diya"></div>
+            <div class="diya"></div>
+            <div class="diya"></div>
+            <div class="diya"></div>
+        </div>
+    </footer>
+
+    <div class="modal-overlay" id="modal">
+        <div class="reveal-card">
+            <div class="card-box-num" id="card-box-num">Box #1</div>
+            <div class="card-header" id="card-header">Congratulations!</div>
+            <div class="card-title" id="card-title">Brainwave</div>
+            <div class="card-detail" id="card-detail">Award Category</div>
+            <button class="btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <script>
+        // Updated Awards List from document
+        const defaultAwards = [
+            "Brainwave | Award Category",
+            "Footprint | Award Category",
+            "Brainstorm | Award Category",
+            "Haunted House | Award Category",
+            "Window Shopping | Award Category",
+            "Bull's-eye | Award Category",
+            "Hot Chocolate | Award Category",
+            "Icebreaker | Award Category",
+            "Couch potato | Award Category"
+        ];
+
+        let config = {
+            totalBoxes: 40,
+            awards: [...defaultAwards],
+            emptyMsg: "Better Luck Next Time!"
+        };
+
+        let boxContents = [];
+        let openedState = [];
+
+        function initGame() {
+            const savedConfig = localStorage.getItem('hhc_navratri_config');
+            if (savedConfig) {
+                try {
+                    config = JSON.parse(savedConfig);
+                } catch (e) { }
+            }
+
+            document.getElementById('box-count-input').value = config.totalBoxes;
+            document.getElementById('awards-input').value = config.awards.join('\n');
+            document.getElementById('empty-msg-input').value = config.emptyMsg;
+
+            resetGame();
+        }
+
+        function resetGame() {
+            boxContents = [];
+            for (let i = 0; i < config.totalBoxes; i++) {
+                if (i < config.awards.length) {
+                    const parts = config.awards[i].split('|').map(s => s.trim());
+                    boxContents.push({
+                        title: parts[0],
+                        detail: parts[1] || "",
+                        isEmpty: false
+                    });
+                } else {
+                    boxContents.push({
+                        title: config.emptyMsg,
+                        detail: "",
+                        isEmpty: true
+                    });
+                }
+            }
+
+            shuffleArray(boxContents);
+            openedState = new Array(config.totalBoxes).fill(false);
+
+            renderGrid();
+            updateStats();
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            for (let i = 0; i < config.totalBoxes; i++) {
+                const colorIndex = (i % 9) + 1;
+                const box = document.createElement('div');
+                box.className = `box box-color-${colorIndex}`;
+                box.id = `box-${i}`;
+
+                if (openedState[i]) {
+                    box.classList.add('opened');
+                    const content = boxContents[i];
+                    box.innerHTML = `
+                        <div class="revealed-mini ${content.isEmpty ? 'empty' : ''}">
+                            <span class="mini-number">#${i + 1}</span>
+                            <span class="mini-award">${content.title}</span>
+                        </div>
+                    `;
+                } else {
+                    box.innerHTML = `
+                        <div class="box-inner">
+                            <div class="ribbon-v"></div>
+                            <div class="ribbon-h"></div>
+                            <div class="bow"></div>
+                            <span class="box-number">${i + 1}</span>
+                        </div>
+                    `;
+                    box.onclick = () => openBox(i);
+                }
+
+                grid.appendChild(box);
+            }
+        }
+
+        function openBox(index) {
+            if (openedState[index]) return;
+
+            const box = document.getElementById(`box-${index}`);
+            box.classList.add('shaking');
+
+            setTimeout(() => {
+                box.classList.remove('shaking');
+                openedState[index] = true;
+                const content = boxContents[index];
+
+                document.getElementById('card-box-num').innerText = `Box #${index + 1}`;
+                document.getElementById('card-header').innerText = content.isEmpty ? "OOPS!" : "CONGRATULATIONS!";
+                document.getElementById('card-title').innerText = content.title;
+                document.getElementById('card-detail').innerText = content.detail;
+
+                document.getElementById('modal').classList.add('active');
+
+                if (!content.isEmpty) {
+                    triggerConfetti();
+                }
+
+                renderGrid();
+                updateStats();
+            }, 400);
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        function updateStats() {
+            const remaining = openedState.filter(s => !s).length;
+            document.getElementById('remaining-count').innerText = remaining;
+            document.getElementById('total-count').innerText = config.totalBoxes;
+        }
+
+        function shuffleAndClose() {
+            resetGame();
+        }
+
+        function revealAll() {
+            openedState = new Array(config.totalBoxes).fill(true);
+            renderGrid();
+            updateStats();
+        }
+
+        function toggleSettings() {
+            const panel = document.getElementById('settings-panel');
+            panel.classList.toggle('open');
+        }
+
+        function saveSettings() {
+            const count = parseInt(document.getElementById('box-count-input').value) || 40;
+            const awardsText = document.getElementById('awards-input').value;
+            const emptyMsg = document.getElementById('empty-msg-input').value || "Better Luck Next Time!";
+
+            const awardsList = awardsText.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+
+            config = {
+                totalBoxes: Math.min(Math.max(count, 1), 100),
+                awards: awardsList,
+                emptyMsg: emptyMsg
+            };
+
+            localStorage.setItem('hhc_navratri_config', JSON.stringify(config));
+            toggleSettings();
+            resetGame();
+        }
+
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#D4AF37', '#FF4B4B', '#FF851B', '#FFDC00', '#2ECC40', '#0074D9', '#FFF'];
+
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 12,
+                    vy: (Math.random() - 0.7) * 12,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 8 + 4,
+                    life: 100
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let alive = false;
+
+                particles.forEach(p => {
+                    if (p.life > 0) {
+                        alive = true;
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.2;
+                        p.life--;
+                        ctx.fillStyle = p.color;
+                        ctx.fillRect(p.x, p.y, p.size, p.size);
+                    }
+                });
+
+                if (alive) {
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            animate();
+        }
+
+        window.onload = initGame;
+    </script>
+</body>
+
+</html>
