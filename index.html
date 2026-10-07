@@ -411,7 +411,7 @@
         }
 
         .card-title {
-            font-size: 2.2rem;
+            font-size: 1.8rem;
             color: #2D0A1E;
             font-weight: 800;
             margin-bottom: 12px;
@@ -420,9 +420,31 @@
 
         .card-detail {
             font-size: 1.1rem;
-            color: #555;
-            margin-bottom: 30px;
+            color: #5B4510;
+            background: rgba(212, 175, 55, 0.16);
+            border: 1px solid rgba(170, 122, 30, 0.4);
+            border-left: 4px solid var(--gold-dark);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 0 auto 16px;
             font-style: italic;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .card-detail:not(:empty)::before {
+            content: "";
+            display: block;
+            margin-bottom: 4px;
+            color: var(--gold-dark);
+            font-size: 0.7rem;
+            font-style: normal;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .card-detail:empty {
+            display: none;
         }
 
         .card-box-num {
@@ -609,8 +631,8 @@
         <div class="reveal-card">
             <div class="card-box-num" id="card-box-num">Box #1</div>
             <div class="card-header" id="card-header">Congratulations!</div>
-            <div class="card-title" id="card-title">Brainwave</div>
             <div class="card-detail" id="card-detail">Award Category</div>
+            <div class="card-title" id="card-title">Brainwave</div>
             <button class="btn" onclick="closeModal()">Close</button>
         </div>
     </div>
@@ -623,7 +645,7 @@
         const defaultAwards = [
             "Popcorn | Crunch into the Fun!",
             "Chai / Coffee | Sip, Smile, & Refresh!",
-            "Health Fruit Party | A Bowl Full of Goodness!",
+            "Healthy Fruit Party | A Bowl Full of Goodness!",
             "Health Fruit Party | Fresh Bites, Healthy Vibes!",
             "Fun Hour (1 hr) | Unplug, Play, & Celebrate!",
             "Fun Hour (1 hr) | Time to Chill & Unwind!",
@@ -640,12 +662,12 @@
             "Art Party | Unleash Your Creativity!",
             "Art Party | Colors, Crafts, & Celebrations!",
             "Dry Fruits | Premium Goodness for Health!",
-            "Diya | Light Up Your Festivities!",
-            "Diya | Brightening Up Your Celebration!",
-            "Scented Candle | Cozy Vibes & Relaxing Aromas!",
-            "Brooch | Add a Touch of Elegance!",
-            "Eye Roller | Unwind & Refresh Your Eyes!",
-            "Eye Roller | Cool Touch of Relaxation!",
+            "Diya | Keep Shining, Keep Healing!",
+            "Diya | Keep Shining, Keep Healing!",
+            "Scented Candle | You Make HHC Shine!",
+            "Brooch | Wear Your Win!",
+            "Eye Roller | A Little Chill for a Lot of Hustle!",
+            "Eye Roller | A Little Chill for a Lot of Hustle!",
             "Pizza Party (Domino's) | Slice, Slice, Hooray!",
             "Pizza Party (Domino's) | Cheesy Happiness Delivered!",
             "Knorr Soup | Warm, Comforting, & Cozy!",
